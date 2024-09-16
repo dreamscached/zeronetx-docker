@@ -16,5 +16,5 @@ Run these commands in your termina:
 
 ```shell
 docker volume create zeronetx-data
-docker run -d --rm --name zeronetx -p 127.0.0.1:43110:43110 -v zeronetx-data:/data ghcr.io/dreamscached/zeronet:latest
+docker run -d --rm --name zeronetx -p 127.0.0.1:43110:43110 -v zeronetx-data:/data ghcr.io/dreamscached/zeronetx-docker:latest
 ```
