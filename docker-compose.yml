@@ -1,0 +1,16 @@
+services:
+  zeronetx:
+    image: ghcr.io/dreamscached/zeronetx-docker:latest
+    # uncomment to build locally instead of pulling the published image
+    # build: .
+    container_name: zeronetx
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:43110:43110"
+      # fs must be reachable from the internet for peers to connect
+      - "26117:26117"
+    volumes:
+      - zeronetx-data:/data
+
+volumes:
+  zeronetx-data:
