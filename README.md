@@ -5,16 +5,30 @@ Alternative (and improved) Dockerfile + entrypoint script for ZeroNetX
 
 ## What's new?
 
-- Tor is enabled by default
+- Tor is enabled by default, and runs as its own service
 - Moved startup directory to `/zeronet`
 - Moved data directory to `/data`
 - Config file `zeronet.conf` is moved to `/data` (to persist between container restarts)
+- Supports passing custom ZeroNetX arguments
 
 ## How to start?
 
-Run these commands in your termina:
-
 ```shell
-docker volume create zeronetx-data
-docker run -d --rm --name zeronetx -p 127.0.0.1:43110:43110 -v zeronetx-data:/data ghcr.io/dreamscached/zeronetx-docker:latest
+curl -O https://raw.githubusercontent.com/dreamscached/zeronetx-docker/master/docker-compose.yml
+docker compose up -d
 ```
+
+The web interface is then available at <http://127.0.0.1:43110>.
+
+## Custom arguments
+
+Anything passed to the `zeronetx` container is appended to the defaults:
+
+```yaml
+services:
+  zeronetx:
+    command: ["--verbose", "--tor", "always"]
+```
+
+The full list is in
+[ZeroNetX's `Config.py`](https://github.com/ZeroNetX/ZeroNet/blob/py3-latest/src/Config.py).

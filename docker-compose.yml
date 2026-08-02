@@ -1,16 +1,41 @@
 services:
+  tor:
+    image: ghcr.io/dreamscached/zeronetx-docker:latest
+    # uncomment to build locally instead of pulling the published image
+    # build: .
+    container_name: zeronetx-tor
+    restart: unless-stopped
+    # same image as zeronetx, but run tor instead of zeronet
+    entrypoint: ["tor", "-f", "/etc/tor/torrc"]
+    stop_grace_period: 30s
+    volumes:
+      - tor-data:/var/lib/tor
+    healthcheck:
+      test: ["CMD", "nc", "-z", "127.0.0.1", "9051"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
   zeronetx:
     image: ghcr.io/dreamscached/zeronetx-docker:latest
     # uncomment to build locally instead of pulling the published image
     # build: .
     container_name: zeronetx
     restart: unless-stopped
+    stop_grace_period: 30s
+    depends_on:
+      tor:
+        condition: service_healthy
     ports:
       - "127.0.0.1:43110:43110"
       # fs must be reachable from the internet for peers to connect
       - "26117:26117"
     volumes:
       - zeronetx-data:/data
+      - tor-data:/var/lib/tor:ro
+    # extra zeronet arguments appended to the defaults
+    # command: ["--verbose", "--tor", "always"]
 
 volumes:
   zeronetx-data:
+  tor-data:

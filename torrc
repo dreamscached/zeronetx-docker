@@ -1,0 +1,7 @@
+User tor
+DataDirectory /var/lib/tor
+SocksPort 0.0.0.0:9050
+ControlPort 0.0.0.0:9051
+CookieAuthentication 1
+SocksPolicy accept private:*
+SocksPolicy reject *:*

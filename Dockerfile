@@ -9,14 +9,12 @@ RUN python3 -m venv /zeronet/venv && source /zeronet/venv/bin/activate \
 FROM alpine:3.23
 COPY --from=build /zeronet /zeronet
 ADD docker_entrypoint.sh /docker_entrypoint.sh
-
-RUN apk add --no-cache python3 py3-pip tor openssl \
- && echo "ControlPort 9051" >> /etc/tor/torrc \
- && echo "CookieAuthentication 1" >> /etc/tor/torrc
+ADD torrc /etc/tor/torrc
+RUN apk add --no-cache python3 py3-pip tor openssl
 
 ENV HOME=/zeronet
 VOLUME /data
 EXPOSE 43110 26117
 
 WORKDIR /zeronet
-CMD ["/docker_entrypoint.sh"]
+ENTRYPOINT ["/docker_entrypoint.sh"]
