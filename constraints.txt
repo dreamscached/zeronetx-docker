@@ -1,0 +1,2 @@
+# need that because gevent 25.4.1 started monkey-patching queue.Queue with its own implementation
+gevent<25
