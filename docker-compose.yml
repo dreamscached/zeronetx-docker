@@ -1,6 +1,7 @@
 services:
   tor:
     image: ghcr.io/dreamscached/zeronetx-docker:latest
+    pull_policy: always
     # uncomment to build locally instead of pulling the published image
     # build: .
     container_name: zeronetx-tor
@@ -19,6 +20,7 @@ services:
 
   zeronetx:
     image: ghcr.io/dreamscached/zeronetx-docker:latest
+    pull_policy: always
     # uncomment to build locally instead of pulling the published image
     # build: .
     container_name: zeronetx
