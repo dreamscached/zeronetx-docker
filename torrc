@@ -5,3 +5,8 @@ ControlPort 0.0.0.0:9051
 CookieAuthentication 1
 SocksPolicy accept private:*
 SocksPolicy reject *:*
+# we don't want to be a relay node
+ORPort 0
+DirPort 0
+ExitRelay 0
+ClientOnly 1

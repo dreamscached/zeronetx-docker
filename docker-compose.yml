@@ -12,9 +12,10 @@ services:
       - tor-data:/var/lib/tor
     healthcheck:
       test: ["CMD", "nc", "-z", "127.0.0.1", "9051"]
-      interval: 5s
-      timeout: 3s
-      retries: 12
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
 
   zeronetx:
     image: ghcr.io/dreamscached/zeronetx-docker:latest
@@ -26,10 +27,20 @@ services:
     depends_on:
       tor:
         condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - '-f'
+        - 'http://127.0.0.1:43110/'
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
     ports:
       - "127.0.0.1:43110:43110"
       # fs must be reachable from the internet for peers to connect
-      - "26117:26117"
+      #- "26117:26117"
     volumes:
       - zeronetx-data:/data
       - tor-data:/var/lib/tor:ro
