@@ -5,7 +5,8 @@ Alternative (and improved) Dockerfile + entrypoint script for ZeroNetX
 
 ## What's new?
 
-- Tor is enabled by default, and runs as its own service
+- Tor is enforced (`--tor always`) and runs as its own service
+- ZeroNetX runs on an `internal` network with no gateway, so it can only reach Tor (killswitch)
 - Moved startup directory to `/zeronet`
 - Moved data directory to `/data`
 - Config file `zeronet.conf` is moved to `/data` (to persist between container restarts)
@@ -27,7 +28,7 @@ Anything passed to the `zeronetx` container is appended to the defaults:
 ```yaml
 services:
   zeronetx:
-    command: ["--verbose", "--tor", "always"]
+    command: ["--verbose"]
 ```
 
 The full list is in

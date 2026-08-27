@@ -2,13 +2,16 @@ services:
   tor:
     image: ghcr.io/dreamscached/zeronetx-docker:latest
     pull_policy: always
-    # uncomment to build locally instead of pulling the published image
+    # to build locally instead, uncomment build and comment out pull_policy
     # build: .
     container_name: zeronetx-tor
     restart: unless-stopped
     # same image as zeronetx, but run tor instead of zeronet
     entrypoint: ["tor", "-f", "/etc/tor/torrc"]
     stop_grace_period: 30s
+    networks:
+      - tor-net
+      - wan
     volumes:
       - tor-data:/var/lib/tor
     healthcheck:
@@ -21,7 +24,7 @@ services:
   zeronetx:
     image: ghcr.io/dreamscached/zeronetx-docker:latest
     pull_policy: always
-    # uncomment to build locally instead of pulling the published image
+    # to build locally instead, uncomment build and comment out pull_policy
     # build: .
     container_name: zeronetx
     restart: unless-stopped
@@ -34,22 +37,47 @@ services:
         - CMD
         - curl
         - '-I'
-        - '-H"Accept: text/html"'
+        - '-H'
+        - 'Accept: text/html'
         - '--fail'
         - 'http://127.0.0.1:43110/Stats'
       interval: 10s
       timeout: 5s
       retries: 3
       start_period: 15s
-    ports:
-      - "127.0.0.1:43110:43110"
-      # fs must be reachable from the internet for peers to connect
-      #- "26117:26117"
+    networks:
+      - tor-net
     volumes:
       - zeronetx-data:/data
       - tor-data:/var/lib/tor:ro
     # extra zeronet arguments appended to the defaults
-    # command: ["--verbose", "--tor", "always"]
+    # command: ["--verbose"]
+
+  # zeronetx has no publishable interface, so the ui is forwarded in from here
+  ui-proxy:
+    image: ghcr.io/dreamscached/zeronetx-docker:latest
+    pull_policy: always
+    # to build locally instead, uncomment build and comment out pull_policy
+    # build: .
+    container_name: zeronetx-ui-proxy
+    restart: unless-stopped
+    # same image as zeronetx, but run socat instead of zeronet
+    entrypoint: ["socat", "TCP-LISTEN:43110,fork,reuseaddr", "TCP:zeronetx:43110"]
+    depends_on:
+      zeronetx:
+        condition: service_healthy
+    networks:
+      - tor-net
+      - ui
+    ports:
+      - "127.0.0.1:43110:43110"
+
+networks:
+  tor-net:
+    # killswitch
+    internal: true
+  wan:
+  ui:
 
 volumes:
   zeronetx-data:
